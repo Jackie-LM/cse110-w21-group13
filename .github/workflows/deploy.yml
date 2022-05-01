@@ -20,7 +20,7 @@ jobs:
 
       - name: Install modules and ready build
         run: |
-          npm install
+          npm ci
           mkdir build
 
       - name: Build app

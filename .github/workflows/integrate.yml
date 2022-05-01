@@ -13,7 +13,7 @@ jobs:
 
       # installs the npm modules
       - name: Install modules
-        run: npm --prefix source/ install
+        run: npm --prefix source/ ci
 
       # lint
       - name: Run linter
@@ -26,20 +26,17 @@ jobs:
 
       #installs the npm modules
       - name: Install modules
-        run: npm --prefix source/ install
+        run: npm --prefix source/ ci
 
-      - name: Annotate tests on PR
+      # Use jest test suite's results to annotate tests on PR
+      - name: Annotate unit tests on PR
         uses: mattallty/jest-github-action@v1.0.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           test-command: "npm --prefix source/ test"
-
-      # run the test suite
-      - name: Run unit tests
-        run: npm --prefix source/ test
         
-      - name: Run integration tests
+      - name: Run E2E tests
         uses: cypress-io/github-action@v2
         with:
           install: false
