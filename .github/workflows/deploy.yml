@@ -11,10 +11,8 @@ on:
 jobs:
   # builds app, coverage report, and jsdocs in build folder and deploys to the gh-pages branch
   deploy-app:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: source
+    runs-on: ubuntu-18.04
+
     steps:
       - uses: actions/checkout@v3
 
