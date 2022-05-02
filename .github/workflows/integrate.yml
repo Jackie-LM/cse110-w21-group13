@@ -43,11 +43,21 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Restore cached .npm
-      - uses: actions/setup-node@v3
+      # Restore cached .npm
+      - name: Cached .npm
+        uses: actions/setup-node@v3
         with: 
           node-version: 16
           cache: 'npm'
+
+      # Restore cached cypress binaries
+      - name: Cached Cypress binary
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
 
       # lint
       - name: Run linter
@@ -61,7 +71,7 @@ jobs:
       
       # Restore cached .npm
       - name: Cached .npm
-      - uses: actions/setup-node@v3
+        uses: actions/setup-node@v3
         with: 
           node-version: 16
           cache: 'npm'
