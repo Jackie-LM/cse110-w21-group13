@@ -60,6 +60,10 @@ jobs:
           key: cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
           restore-keys: |
             cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
+      
+      # Install dependencies from caches
+      - name: Dependency installation from caches
+        run: npm ci
 
       # lint
       - name: Run linter
@@ -87,6 +91,10 @@ jobs:
           key: cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
           restore-keys: |
             cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
+
+      # Install dependencies from caches
+      - name: Dependency installation from caches
+        run: npm ci
 
       # run the test suite
       - name: Unit tests
