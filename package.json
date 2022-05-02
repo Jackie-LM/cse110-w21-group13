@@ -13,7 +13,7 @@
     "watch": "watch 'npm run instrument' source/src/components source/src/scripts",
     "test": "jest",
     "test:watch": "jest --watch",
-    "lint": "eslint --fix --fix-type layout source/.",
+    "lint": "eslint --fix --fix-type layout source/",
     "instrument": "npx rimraf source/src/instrumented && npx nyc instrument --compact=false source/src source/src/instrumented",
     "cy:verify": "cypress verify",
     "cy:info": "cypress cache list"
@@ -54,7 +54,7 @@
   "jest": {
     "verbose": true,
     "collectCoverage": true,
-    "coverageDirectory": "coverage/jest",
+    "coverageDirectory": "source/coverage/jest",
     "testEnvironment": "jest-environment-jsdom-sixteen",
     "transform": {
       "^.+\\.jsx?$": "babel-jest"
@@ -83,13 +83,12 @@
     ]
   },
   "nyc": {
-    "report-dir": "coverage/cypress",
+    "report-dir": "source/coverage/cypress",
     "reporter": [
       "text",
       "json",
       "lcov"
-    ],
-    "exclude": "src/instrumented"
+    ]
   },
   "husky": {
     "hooks": {
