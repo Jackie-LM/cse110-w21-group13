@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
-          working-directory: source
+          cache-dependency-path: source/package-lock.json
       
       # https://glebbahmutov.com/blog/do-not-let-cypress-cache-snowball/
       - name: Cache Cypress binary
@@ -50,7 +50,7 @@ jobs:
         with: 
           node-version: 16
           cache: 'npm'
-          working-directory: source
+          cache-dependency-path: source/package-lock.json
 
       # Restore cached cypress binaries
       - name: Cached Cypress binary
@@ -77,7 +77,7 @@ jobs:
         with: 
           node-version: 16
           cache: 'npm'
-          working-directory: source
+          cache-dependency-path: source/package-lock.json
 
       # Restore cached cypress binaries
       - name: Cached Cypress binary
