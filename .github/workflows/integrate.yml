@@ -11,8 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Setups node with caching
-      - name: Cache modules
+      - name: Setup node with module cache
         uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -26,13 +25,6 @@ jobs:
           key: cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
           restore-keys: |
             cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
-      
-      # - name: Installation step
-      #   uses: cypress-io/github-action@v2
-      #   with:
-      #     run-tests: false
-      #   env:
-      #     CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
 
       - name: Dependency installation
         run: npm ci
@@ -43,9 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Retrieves cached node_modules
-      # Setups node with caching
-      - name: Retrieve cached modules
+      - name: Setup node with module cache
         uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -65,19 +55,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Setups node with caching
-      # - name: Cache local node_modules
-      #   uses: actions/cache@v3
-      #   id: cache-deps
-      #   with:
-      #     path: ~/.npm
-      #     key: ${{ runner.os }}-node-modules-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-node-modules-${{ github.ref }}-
-    
-      # Retrieves cached node_modules
-      # Setups node with caching
-      - name: Retrieve cached modules
+      - name: Setup node with module cache
         uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -94,17 +72,6 @@ jobs:
 
       - name: Install cached modules
         run: npm ci
-
-      # # installs the npm modules
-      # - name: Install modules
-      #   run: npm --prefix source/ install
-
-      # - name: Annotate tests on PR
-      #   uses: mattallty/jest-github-action@v1.0.3
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     test-command: "npm --prefix source/ test"
 
       # run the test suite
       - name: Run unit tests
