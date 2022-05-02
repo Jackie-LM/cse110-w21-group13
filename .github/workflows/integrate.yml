@@ -10,60 +10,14 @@ defaults:
     working-directory: source
 
 jobs:
-  # https://docs.cypress.io/guides/continuous-integration/introduction#Caching
-  # Goal is to only install the modules once and to let cypress be used
-  install:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      # Cache npm modules for later use
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: 'npm'
-          cache-dependency-path: source/package-lock.json
-      
-      # https://glebbahmutov.com/blog/do-not-let-cypress-cache-snowball/
-      - name: Cache Cypress binary
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/Cypress
-          key: cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
-          restore-keys: |
-            cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
 
       # installs the npm modules
       - name: Install modules
-        run: npm ci
-
-  lint:
-    runs-on: ubuntu-latest
-    needs: install
-    steps:
-      - uses: actions/checkout@v3
-
-      # Restore cached .npm
-      - name: Cached .npm
-        uses: actions/setup-node@v3
-        with: 
-          node-version: 16
-          cache: 'npm'
-          cache-dependency-path: source/package-lock.json
-
-      # Restore cached cypress binaries
-      - name: Cached Cypress binary
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/Cypress
-          key: cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
-          restore-keys: |
-            cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
-      
-      # Install dependencies from caches
-      - name: Dependency installation from caches
-        run: npm ci
+        run: npm install
 
       # lint
       - name: Run linter
@@ -71,41 +25,23 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    needs: install
     steps:
       - uses: actions/checkout@v3
-      
-      # Restore cached .npm
-      - name: Cached .npm
-        uses: actions/setup-node@v3
-        with: 
-          node-version: 16
-          cache: 'npm'
-          cache-dependency-path: source/package-lock.json
 
-      # Restore cached cypress binaries
-      - name: Cached Cypress binary
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/Cypress
-          key: cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
-          restore-keys: |
-            cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
-
-      # Install dependencies from caches
-      - name: Dependency installation from caches
-        run: npm ci
+      #installs the npm modules
+      - name: Install modules
+        run: npm install
 
       # run the test suite
-      - name: Unit tests
+      - name: Run unit tests
         run: npm test
 
-      # - name: Annotate tests on PR
-      #   uses: mattallty/jest-github-action@v1.0.3
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     working-directory: source
+      - name: Annotate tests on PR
+        uses: mattallty/jest-github-action@v1.0.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          working-directory: source
         
       - name: Run integration tests
         uses: cypress-io/github-action@v2
