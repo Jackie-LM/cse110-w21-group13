@@ -10,8 +10,8 @@ defaults:
     working-directory: source
 
 jobs:
-  # Reference from: https://docs.cypress.io/guides/continuous-integration/github-actions#Install-Job
-  # Goal is to only install the modules once
+  # https://docs.cypress.io/guides/continuous-integration/introduction#Caching
+  # Goal is to only install the modules once and to let cypress be used
   install:
     runs-on: ubuntu-latest
     steps:
@@ -24,14 +24,30 @@ jobs:
           node-version: 16
           cache: 'npm'
       
+      # https://glebbahmutov.com/blog/do-not-let-cypress-cache-snowball/
+      - name: Cache Cypress binary
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
+
       # installs the npm modules
       - name: Install modules
         run: npm ci
 
   lint:
     runs-on: ubuntu-latest
+    needs: install
     steps:
       - uses: actions/checkout@v3
+
+      - name: Restore cached .npm
+      - uses: actions/setup-node@v3
+        with: 
+          node-version: 16
+          cache: 'npm'
 
       # lint
       - name: Run linter
@@ -39,21 +55,25 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    needs: install
     steps:
       - uses: actions/checkout@v3
-
-      # Get node modules
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
+      
+      # Restore cached .npm
+      - name: Cached .npm
+      - uses: actions/setup-node@v3
+        with: 
           node-version: 16
           cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
-      
-      - name: Install modules (cached)
-        run: npm ci
-        env:
-          CYPRESS_CACHE_FOLDER: ~/.npm
+
+      # Restore cached cypress binaries
+      - name: Cached Cypress binary
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
 
       # run the test suite
       - name: Unit tests
@@ -75,9 +95,3 @@ jobs:
           working-directory: source
           browser: chrome
           start: npm start
-
-      - name: Echo
-        run: |
-          ls -la
-          ls -la ~
-          ls -la ~/.npm
