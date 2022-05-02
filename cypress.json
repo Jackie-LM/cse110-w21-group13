@@ -1,1 +1,11 @@
-{}
+{
+  "downloadsFolder": "./artifacts/cypress/downloads",
+  "fileServerFolder": "./source",
+  "fixturesFolder": "./source/cypress/fixtures",
+  "integrationFolder": "./source/cypress/integration",
+  "pluginsFile": "./source/cypress/plugins/index.js",
+  "screenshotsFolder": "./artifacts/cypress/screenshots",
+  "supportFile": "./source/cypress/support/index.js",
+  "testFiles": "**/*",
+  "videoFiles": "./artifacts/cypress/videos"
+}
