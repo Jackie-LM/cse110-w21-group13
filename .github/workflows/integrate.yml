@@ -5,6 +5,10 @@ on:
   workflow_dispatch:
   pull_request:
 
+defaults:
+  run:
+    working-directory: source
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -13,11 +17,11 @@ jobs:
 
       # installs the npm modules
       - name: Install modules
-        run: npm --prefix source/ install
+        run: npm ci
 
       # lint
       - name: Run linter
-        run: npm --prefix source/ run lint
+        run: npm run lint
 
   test:
     runs-on: ubuntu-latest
@@ -26,18 +30,18 @@ jobs:
 
       #installs the npm modules
       - name: Install modules
-        run: npm --prefix source/ install
+        run: npm ci
 
       - name: Annotate tests on PR
         uses: mattallty/jest-github-action@v1.0.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          test-command: "npm --prefix source/ test"
+          test-command: "npm test"
 
       # run the test suite
       - name: Run unit tests
-        run: npm --prefix source/ test
+        run: npm test
         
       - name: Run integration tests
         uses: cypress-io/github-action@v2
