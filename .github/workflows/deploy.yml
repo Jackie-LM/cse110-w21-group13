@@ -16,15 +16,21 @@ jobs:
       run:
         working-directory: source
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+
+      - name: Setup node with module cache
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
 
       - name: Install modules and ready build
         run: |
-          npm install
+          npm ci --production
           mkdir build
 
       - name: Build app
-        run: cp -av src/* build
+        run: cp -av source/src/* build
 
       - name: Build Jest coverage report
         run: npm test
@@ -33,7 +39,6 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           install: false
-          working-directory: source
           browser: chrome
           start: npm start
 
@@ -43,7 +48,7 @@ jobs:
         uses: andstor/jsdoc-action@v1
         with:
           source_dir: source/src
-          output_dir: source/build/docs
+          output_dir: build/docs
           template: minami
           front_page: README.md
           recurse: true
@@ -52,4 +57,4 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@4.1.0
         with:
           branch: gh-pages
-          folder: source/build
+          folder: build
