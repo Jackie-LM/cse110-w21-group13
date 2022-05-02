@@ -12,14 +12,11 @@ jobs:
       - uses: actions/checkout@v3
 
       # Setups node with caching
-      - name: Cache local node_modules
-        uses: actions/cache@v3
-        id: cache-deps
+      - name: Cache modules
+        uses: actions/setup-node@v3
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-modules-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-${{ github.ref }}-
+          node-version: 16
+          cache: 'npm'
       
       - name: Cache Cypress installation
         uses: actions/cache@v3
@@ -47,14 +44,16 @@ jobs:
       - uses: actions/checkout@v3
 
       # Retrieves cached node_modules
-      - name: Cache local node_modules
-        uses: actions/cache@v3
-        id: cache-deps
+      # Setups node with caching
+      - name: Retrieve cached modules
+        uses: actions/setup-node@v3
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-modules-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-${{ github.ref }}-
+          node-version: 16
+          cache: 'npm'
+      
+      # Install from cached .npm
+      - name: Install cached modules
+        run: npm ci
 
       # lint
       - name: Run linter
@@ -67,14 +66,22 @@ jobs:
       - uses: actions/checkout@v3
 
       # Setups node with caching
-      - name: Cache local node_modules
-        uses: actions/cache@v3
-        id: cache-deps
+      # - name: Cache local node_modules
+      #   uses: actions/cache@v3
+      #   id: cache-deps
+      #   with:
+      #     path: ~/.npm
+      #     key: ${{ runner.os }}-node-modules-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-node-modules-${{ github.ref }}-
+    
+      # Retrieves cached node_modules
+      # Setups node with caching
+      - name: Retrieve cached modules
+        uses: actions/setup-node@v3
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-modules-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-${{ github.ref }}-
+          node-version: 16
+          cache: 'npm'
       
       - name: Cache Cypress installation
         uses: actions/cache@v3
@@ -84,6 +91,9 @@ jobs:
           key: cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
           restore-keys: |
             cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
+
+      - name: Install cached modules
+        run: npm ci
 
       # # installs the npm modules
       # - name: Install modules
