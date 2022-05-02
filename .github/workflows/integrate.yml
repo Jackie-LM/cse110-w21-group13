@@ -10,14 +10,28 @@ defaults:
     working-directory: source
 
 jobs:
-  lint:
+  # Reference from: https://docs.cypress.io/guides/continuous-integration/github-actions#Install-Job
+  # Goal is to only install the modules once
+  install:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
+      # Cache npm modules for later use
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+      
       # installs the npm modules
       - name: Install modules
         run: npm ci
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
       # lint
       - name: Run linter
@@ -26,22 +40,29 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      #installs the npm modules
-      - name: Install modules
+      # Get node modules
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      
+      - name: Install modules (cached)
         run: npm ci
 
       # run the test suite
-      - name: Run unit tests
+      - name: Unit tests
         run: npm test
 
-      - name: Annotate tests on PR
-        uses: mattallty/jest-github-action@v1.0.3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          working-directory: source
+      # - name: Annotate tests on PR
+      #   uses: mattallty/jest-github-action@v1.0.3
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     working-directory: source
         
       - name: Run integration tests
         uses: cypress-io/github-action@v2
