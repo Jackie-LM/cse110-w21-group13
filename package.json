@@ -4,15 +4,15 @@
   "description": "A horrible Pomodoro timer",
   "main": "index.js",
   "directories": {
-    "test": "tests"
+    "test": "source/tests"
   },
   "scripts": {
-    "start": "http-server src -p=5500",
-    "watch": "watch 'npm run instrument' src/components src/scripts",
+    "start": "http-server source/src -p=5500",
+    "watch": "watch 'npm run instrument' source/src/components source/src/scripts",
     "test": "jest",
     "test:watch": "jest --watch",
-    "lint": "eslint --fix --fix-type layout .",
-    "instrument": "npx rimraf src/instrumented && npx nyc instrument --compact=false src src/instrumented"
+    "lint": "eslint --fix --fix-type layout source/.",
+    "instrument": "npx rimraf source/src/instrumented && npx nyc instrument --compact=false source/src source/src/instrumented"
   },
   "repository": {
     "type": "git",

@@ -6,43 +6,69 @@ on:
   pull_request:
 
 jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # Setups node with caching
+      - name: Cache local node_modules
+        uses: actions/cache@v3
+        path: node_modules
+        key: ${{ runner.os }}-node-modules-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-modules-${{ github.ref }}-
+      
+      - name: Dependency installation
+        run: npm ci
+
   lint:
     runs-on: ubuntu-latest
+    needs: install
     steps:
       - uses: actions/checkout@v3
 
       # installs the npm modules
       - name: Install modules
-        run: npm --prefix source/ install
+        run: npm ci
 
       # lint
       - name: Run linter
-        run: npm --prefix source/ run lint
+        run: npm run lint
 
   test:
     runs-on: ubuntu-latest
+    needs: install
     steps:
       - uses: actions/checkout@v3
 
-      #installs the npm modules
-      - name: Install modules
-        run: npm --prefix source/ install
-
-      - name: Annotate tests on PR
-        uses: mattallty/jest-github-action@v1.0.3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Cache local node_modules to pass to testing jobs
+      - name: Cache local node_modules
+        uses: actions/cache@v3
         with:
-          test-command: "npm --prefix source/ test"
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-${{ github.ref }}-
+
+      # # installs the npm modules
+      # - name: Install modules
+      #   run: npm --prefix source/ install
+
+      # - name: Annotate tests on PR
+      #   uses: mattallty/jest-github-action@v1.0.3
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     test-command: "npm --prefix source/ test"
 
       # run the test suite
       - name: Run unit tests
-        run: npm --prefix source/ test
+        run: npm test
         
       - name: Run integration tests
         uses: cypress-io/github-action@v2
         with:
           install: false
-          working-directory: source
           browser: chrome
           start: npm start
