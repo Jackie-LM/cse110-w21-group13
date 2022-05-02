@@ -26,7 +26,7 @@ jobs:
 
       - name: Install modules and ready build
         run: |
-          npm ci --production
+          npm ci
           mkdir build
 
       - name: Build app
