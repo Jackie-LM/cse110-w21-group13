@@ -26,7 +26,16 @@ jobs:
         run: |
           npm ci
           mkdir build
-          cp -av source/src build
+          cp -av source/src/* build
+      
+      - name: Build docs
+        uses: andstor/jsdoc-action@v1
+        with:
+          source_dir: build/
+          output_dir: build/docs
+          template: minami
+          front_page: README.md
+          recurse: true
 
       - name: Build Jest coverage report
         run: npm test
@@ -39,16 +48,7 @@ jobs:
           start: npm start
 
       - name: Move coverage reports to build directory
-      - run: cp -av source/coverage build
-
-      - name: Build docs
-        uses: andstor/jsdoc-action@v1
-        with:
-          source_dir: build/
-          output_dir: build/docs
-          template: minami
-          front_page: README.md
-          recurse: true
+      - run: cp -av source/coverage build/coverage
 
       - name: Deploy build on gh-pages
         uses: JamesIves/github-pages-deploy-action@4.1.0
