@@ -48,7 +48,7 @@ jobs:
           start: npm start
 
       - name: Move coverage reports to build directory
-      - run: cp -av source/coverage build/coverage
+        run: cp -av source/coverage build/coverage
 
       - name: Deploy build on gh-pages
         uses: JamesIves/github-pages-deploy-action@4.1.0
