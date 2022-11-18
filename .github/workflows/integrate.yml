@@ -40,7 +40,7 @@ jobs:
         run: npm --prefix source/ test
         
       - name: Run integration tests
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v4
         with:
           install: false
           working-directory: source

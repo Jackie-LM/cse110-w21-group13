@@ -30,7 +30,7 @@ jobs:
         run: npm test
 
       - name: Build Cypress coverage report
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v4
         with:
           install: false
           working-directory: source
